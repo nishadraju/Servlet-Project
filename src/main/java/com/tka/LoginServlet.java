@@ -1,6 +1,9 @@
 package com.tka;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.security.auth.message.callback.PrivateKeyCallback.Request;
@@ -10,6 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.mysql.cj.xdevapi.Result;
+import com.mysql.cj.xdevapi.Statement;
 
 /**
  * Servlet implementation class LoginServlet
@@ -50,9 +56,24 @@ public class LoginServlet extends HttpServlet {
 		
 		String uname=request.getParameter("username");
 		String password=request.getParameter("password");
+		//jdbc
 		
-		if(password.equals("admin")) {
-			ArrayList<String> al =new ArrayList<String>();
+		try {
+		System.out.println(111);
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		System.out.println(222);
+		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","9370503372");
+		System.out.println(2);
+		
+		 
+		String sql = "select username ,password from users where username ='"+ uname+"' and password='"+ password+"'";
+	    
+		System.out.println("sql>>"+sql);
+		java.sql.Statement statement= con.createStatement();
+	    ResultSet resultset	= statement.executeQuery(sql);
+	    
+	    if( resultset.next()) {
+	    	ArrayList<String> al =new ArrayList<String>();
 			al.add("xx");
 			al.add("xx");
 			al.add("xx");
@@ -61,7 +82,6 @@ public class LoginServlet extends HttpServlet {
 			
 		   //request.setAttribute("msg","<font color=\"green\">valid password");
 			request.setAttribute("data",al);
-			
 			RequestDispatcher rd= request.getRequestDispatcher("thankyou.jsp");
 			rd.forward(request, response);
 		
@@ -71,8 +91,16 @@ public class LoginServlet extends HttpServlet {
 			RequestDispatcher rd= request.getRequestDispatcher("login.jsp");
 			rd.forward(request, response);
 			
-			
 		}
+	    
+		}catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+		
+		
+		
+	
 		
 		
 		
